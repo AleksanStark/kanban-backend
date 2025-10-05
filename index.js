@@ -5,12 +5,11 @@ const { Server } = require("socket.io");
 const { randomUUID } = require("crypto");
 
 const app = express();
-
-app.use(cors("*"));
-
 const httpServer = createServer(app);
 
 const io = new Server(httpServer);
+
+app.use(cors());
 
 let kanban = {
   columns: [
