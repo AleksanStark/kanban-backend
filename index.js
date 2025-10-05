@@ -11,7 +11,7 @@ app.use(cors());
 const httpServer = createServer(app);
 
 const io = new Server(httpServer, {
-  cors: { origin: "https://kanban-qu5k.vercel.app" },
+  cors: { origin: "https://kanban-three-nu.vercel.app/" },
 });
 
 let kanban = {
