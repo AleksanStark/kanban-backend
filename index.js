@@ -8,10 +8,10 @@ const app = express();
 const httpServer = createServer(app);
 
 const io = new Server(httpServer, {
-  cors: { origin: "https://kanban-three-nu.vercel.app/" },
+  cors: { origin: "*" }, // ✅ все источники
 });
 
-app.use(cors("https://kanban-three-nu.vercel.app/"));
+app.use(cors()); // ✅ разрешить всем
 
 let kanban = {
   columns: [
@@ -29,15 +29,13 @@ io.on("connection", (socket) => {
   socket.on("addTask", ({ columnId, title }) => {
     const column = kanban.columns.find((col) => col.id === columnId);
     if (column) {
-      column.tasks.push({ id: crypto.randomUUID(), title });
-      io.emit("kanbanState", kanban); // всем шлём новое состояние
+      column.tasks.push({ id: randomUUID(), title }); // ✅ фикс
+      io.emit("kanbanState", kanban);
     }
   });
 
   socket.on("moveTask", ({ taskId, toColumnId }) => {
     let task;
-
-    // убираем таску из старой колонки
     for (const col of kanban.columns) {
       const idx = col.tasks.findIndex((t) => t.id === taskId);
       if (idx !== -1) {
@@ -45,17 +43,13 @@ io.on("connection", (socket) => {
         break;
       }
     }
-
     if (task) {
-      // добавляем в новую колонку
       const newCol = kanban.columns.find((c) => c.id === toColumnId);
-      if (newCol) {
-        newCol.tasks.push(task);
-      }
+      if (newCol) newCol.tasks.push(task);
     }
-
     io.emit("kanbanState", kanban);
   });
+
   socket.on("editTask", ({ taskId, title }) => {
     for (const col of kanban.columns) {
       const task = col.tasks.find((t) => t.id === taskId);
@@ -88,7 +82,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("addColumn", ({ title }) => {
-    kanban.columns.push({ id: crypto.randomUUID(), title: title, tasks: [] });
+    kanban.columns.push({ id: randomUUID(), title, tasks: [] }); // ✅ фикс
     io.emit("kanbanState", kanban);
   });
 });
