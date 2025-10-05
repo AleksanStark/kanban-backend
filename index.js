@@ -7,7 +7,9 @@ const { randomUUID } = require("crypto");
 const app = express();
 const httpServer = createServer(app);
 
-const io = new Server(httpServer);
+const io = new Server(httpServer, {
+  cors: { origin: "https://kanban-three-nu.vercel.app/" },
+});
 
 app.use(cors());
 
