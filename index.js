@@ -11,7 +11,7 @@ const io = new Server(httpServer, {
   cors: { origin: "https://kanban-three-nu.vercel.app/" },
 });
 
-app.use(cors());
+app.use(cors("https://kanban-three-nu.vercel.app/"));
 
 let kanban = {
   columns: [
